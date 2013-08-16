@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Ratings JS Test</title>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+		<!-- Rating plugin -->
+		<script src="/jquery.raty.min.js"></script>
+
+		<!-- Fyre plugins -->
+		<script src="/fyre.ratings.js"></script>
+
+		
+		<style>
+			body {
+				margin: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Ratings Js</h1>
+		<div id="fyre-rating">Fetching data...</div>
+		<div id="fyre-star">Loading...</div>
+
+		<script>
+		var ratingEl = $('#fyre-rating'),
+			starEl = $('#fyre-star');
+
+		/**
+		 * Setup average and distribution score UI given the score object from
+		 * the server.
+		 * @param {number} score
+		 */
+		function setUpScore(score) {
+			var totalRatings = 0;
+			$.each(score['default']['distribution'], function(i, v) {
+				totalRatings += v;
+			});
+			ratingEl.html('<p>Average score: '
+				+ score['default']['average'] / 20 + '</p>' + 
+				'<p>Total ratings: ' + totalRatings + '<p>');
+
+		}
+
+		/**
+		 * Send a rating to the server. The ui invokes the API directly here,
+		 * which in large apps may not be nice.
+		 * @param {number} score
+		 */
+		function sendRating(score) {
+			var $this = $(this);
+
+			// Need to convert score to 100 for Livefyre
+			score *= 20;
+
+			// Set the rating to readonly
+			$this.raty('readOnly', true);
+
+			// Post the rating. On fail, open the rating back up.
+			fyre.ratings.post(score).fail(function() {
+				$this.raty('readOnly', false);
+			});
+		}
+
+		/**
+		 * Setup rating from endpoint, or if no score object passed in, allow
+		 * user to post.
+		 * @param {Object} score
+		 */
+		function setupRating(score) {
+			var data = {
+				halfShow: false,
+				click: sendRating
+			};
+
+			if (score) {
+				data.score = score['default'] / 20;
+				data.readOnly = true;
+			}
+			starEl.html('').raty(data);
+		}
+
+		var token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGl2ZWZ5cmUuY29tIiwgImV4cGlyZXMiOiAxMzc5MjE4NDgwLjY0MDMzMiwgInVzZXJfaWQiOiAiX3UxODI4MjMwIn0.xE_-qb1Pb7tzUB_lSHhru6EkDv2Cl91JyaGr2_6JeFA';
+
+		/**
+		 * Invoke the app. There are two parts:
+		 * - fetch: Get or create the ratings information for this articleId.
+		 * - login: Get the user's rating, if she has left one.
+		 * Notice that the login depends on the collectionId, which is returned
+		 * via the fetch endpoint.
+		 * A more complex implementation may want to use an evented approach
+		 * so that login can be invoked at anytime, and will actually make its
+		 * request when the collection info is returned.
+		 */
+		var ratings = fyre.ratings.fetch(303613, 88096).done(setUpScore).done(function() {
+			fyre.ratings.login(token).always(setupRating);
+		});
+		</script>
+	</body>
+</html>
