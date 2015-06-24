@@ -20,8 +20,7 @@ fyre.ratings = fyre.ratings || {};
  * @type {{NETWORK: string, ENV: string}}
  */
 fyre.ratings.CONFIG = {
-	NETWORK: 'livefyre.com',
-	ENV: 't402'
+	NETWORK: 'client-solutions.fyre.co',
 };
 
 /**
@@ -51,7 +50,7 @@ function strFormat(str, var_args) {
  */
 function getUrlHost(subdomain) {
 	var C  = fyre.ratings.CONFIG;
-	return strFormat("http://{}.{}.{}", subdomain, C.ENV, C.NETWORK);
+	return strFormat("http://{}.{}", subdomain, C.NETWORK);
 };
 
 /**
@@ -59,7 +58,7 @@ function getUrlHost(subdomain) {
  * @type {Object.<string, string>}
  */
 var fyreEndPoints = {
-	'bsInit': getUrlHost('bootstrap') + '/bs3/{}.{}/{}/{}/{}/init',
+	'bsInit': getUrlHost('bootstrap') + '/bs3/v3.1/{}/{}/{}/init',
 	'bsCreate': getUrlHost('quill') + '/api/v3.0/site/{}/collection/create/',
 	'postRating': getUrlHost('quill') + '/api/v3.0/collection/{}/post/rating/?lftoken={}',
 	'hasPosted': getUrlHost('bootstrap') + '/api/v3.0/collection/{}/posted/rating/?lftoken={}'
@@ -120,7 +119,7 @@ function getCollection(siteId, articleId, defer) {
 	// NOTE: Use a base64 lib as this will choke in many cases.
 	var b64ArticleId = btoa(articleId),
 		C  = fyre.ratings.CONFIG,
-		url = getUrl('bsInit', C.ENV, C.NETWORK, C.NETWORK, siteId, b64ArticleId),
+		url = getUrl('bsInit', C.NETWORK, siteId, b64ArticleId),
 		getter = $.ajax({
 			url: url
 			});
