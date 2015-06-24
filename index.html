@@ -80,7 +80,10 @@
 			starEl.html('').raty(data);
 		}
 
-		var token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAibGl2ZWZ5cmUuY29tIiwgImV4cGlyZXMiOiAxMzc5MjE4NDgwLjY0MDMzMiwgInVzZXJfaWQiOiAiX3UxODI4MjMwIn0.xE_-qb1Pb7tzUB_lSHhru6EkDv2Cl91JyaGr2_6JeFA';
+
+		// need to swap out this token in order to leave new reviews
+		
+		var token = 'eyJhbGciOiAiSFMyNTYiLCAidHlwIjogIkpXVCJ9.eyJkb21haW4iOiAiY2xpZW50LXNvbHV0aW9ucy5meXJlLmNvIiwgImV4cGlyZXMiOiAxNDM3NzYyMTM5Ljc5OTUwMiwgInVzZXJfaWQiOiAiVEVNUC0wOGE5YjZiYTJkYzRjNjkzIn0.SVMCYa7L2gcFBPBsVSUaH193cvVW7O0ND7eojJ2VL98';
 
 		/**
 		 * Invoke the app. There are two parts:
@@ -92,7 +95,9 @@
 		 * so that login can be invoked at anytime, and will actually make its
 		 * request when the collection info is returned.
 		 */
-		var ratings = fyre.ratings.fetch(303613, 88096).done(setUpScore).done(function() {
+
+		// fetch takes in site id and article id as args
+		var ratings = fyre.ratings.fetch(357316, 'pcolombo-ratings-01').done(setUpScore).done(function() {
 			fyre.ratings.login(token).always(setupRating);
 		});
 		</script>
